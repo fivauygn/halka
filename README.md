@@ -30,7 +30,7 @@ stellar contract build        # build for the wasm32v1-none target
 
 - **Contract ID:** `CBOGI62MN5V3M7QSOKS7E6YWLLAO73LJIS3TMBMEFIADG2LDC37HUI5Q`
 - **Web app (live):** https://halkawebapp.vercel.app
-- End-to-end verification (tx-hash log): [docs/testnet/first-round-xlm.md](docs/testnet/first-round-xlm.md), [docs/testnet/five-member-cycle-xlm.md](docs/testnet/five-member-cycle-xlm.md)
+- End-to-end verification (tx-hash log): [docs/testnet/first-round-xlm.md](docs/testnet/first-round-xlm.md), [docs/testnet/five-member-cycle-xlm.md](docs/testnet/five-member-cycle-xlm.md) (native XLM SAC), [docs/testnet/three-member-cycle-usdc.md](docs/testnet/three-member-cycle-usdc.md) (real testnet Circle USDC SAC)
 - Architecture & setup: [docs/architecture.md](docs/architecture.md)
 - Testnet accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md)
 
@@ -57,4 +57,5 @@ See [web/README.md](web/README.md) for details.
 - [x] Testnet deploy + CLI end-to-end verification
 - [x] Web app (Freighter) — live on Vercel, connected to the real testnet contract
 - [x] Full 5-member/5-round demo cycle (CLI, real testnet)
+- [x] Full 3-member/3-round demo cycle with real testnet USDC (CLI, real testnet)
 - [ ] UI + video demo with a browser wallet
