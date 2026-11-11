@@ -13,8 +13,8 @@ is never held by a single person or institution.
 │   └── circle/           # Rust/Soroban contract: create_circle, join_circle, deposit, payout, reclaim
 │       ├── src/lib.rs
 │       └── src/test.rs
-├── web/                  # Next.js web app (Freighter wallet integration)
-├── docs/                 # Architecture doc, demo transaction-hash log
+├── web/                  # Next.js web app (Stellar Wallets Kit, Soroban preflight)
+├── docs/                 # Architecture and verification logs
 ├── .github/workflows/    # CI: cargo test + stellar contract build
 └── Cargo.toml            # Workspace root
 ```
@@ -44,8 +44,8 @@ npm run dev      # http://localhost:3000
 
 Next.js 16 (App Router) + TypeScript + Tailwind v4. Contract integration goes through a
 type-safe client generated with `stellar contract bindings typescript` and relocated to
-`web/src/lib/contracts/circle.ts`; wallet connection is via Freighter (`@stellar/freighter-api`).
-See [web/README.md](web/README.md) for details.
+`web/src/lib/contracts/circle.ts`; wallet connection uses Stellar Wallets Kit for Freighter/Varial,
+Albedo, and Hana. See [web/README.md](web/README.md) for details.
 
 ## Status
 
@@ -58,4 +58,7 @@ See [web/README.md](web/README.md) for details.
 - [x] Web app (Freighter) — live on Vercel, connected to the real testnet contract
 - [x] Full 5-member/5-round demo cycle (CLI, real testnet)
 - [x] Full 3-member/3-round demo cycle with real testnet USDC (CLI, real testnet)
-- [ ] UI + video demo with a browser wallet
+- [x] Stellar Wallets Kit integration for Freighter/Varial, Albedo, and Hana
+- [x] Client-side Soroban RPC preflight for deposit, payout, and reclaim
+- [x] Testnet contract regression harness and security/integration documentation
+- [ ] Manual wallet acceptance matrix and UI demo video (requires browser wallets)
