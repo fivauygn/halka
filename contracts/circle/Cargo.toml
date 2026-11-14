@@ -1,7 +1,10 @@
 [package]
 name = "circle"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Halka rotating savings circle (ROSCA) contract for Stellar Soroban"
+repository = "https://github.com/fivauygn/halka"
 publish = false
 
 [lib]
