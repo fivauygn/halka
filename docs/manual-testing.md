@@ -1,7 +1,8 @@
 # Manual testing guide
 
-How to run a complete circle through the web app with a browser wallet on testnet. This covers
-what the automated tests cannot: wallet connection, signing prompts and how the dashboard updates.
+How to run a complete circle through the web app with a real browser wallet on testnet. The
+[browser tests](wallet-integration.md#browser-tests) cover the same flow with an emulated Freighter
+wallet; this guide covers what they cannot: the extensions' own connection and signing prompts.
 
 ## Setup
 

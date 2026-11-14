@@ -94,10 +94,14 @@ contracts) lives in [`web/src/lib/config.ts`](web/src/lib/config.ts). See
 | Layer | How | Where |
 | --- | --- | --- |
 | Contract unit tests | `cargo test --workspace` (21 tests) | [`contracts/circle/src/test.rs`](contracts/circle/src/test.rs) |
-| Web app | `npm run lint`, `npx tsc --noEmit`, `npm run build` | [`web/`](web/) |
-| Testnet regression | `npm run test:contract` against the live contract | [docs/wallet-integration.md](docs/wallet-integration.md#testnet-regression-harness) |
+| Web unit and component tests | `npm test` (Vitest, Testing Library) | [`web/src/**/*.test.ts(x)`](web/src/) |
+| Browser tests | `npm run test:e2e` (Playwright, Chrome) | [`web/e2e/`](web/e2e/) |
+| Wallet-signed lifecycle on testnet | `npm run test:e2e` with three funded test accounts | [docs/testnet/browser-e2e-run.md](docs/testnet/browser-e2e-run.md) |
+| Contract regression on testnet | `npm run test:contract` | [docs/wallet-integration.md](docs/wallet-integration.md#testnet-regression-harness) |
 
-All contract and web checks run in [CI](https://github.com/fivauygn/halka/actions) on every push.
+[CI](https://github.com/fivauygn/halka/actions) runs the contract tests and build, web lint, type
+checks, unit and component tests, the production build, and the read-only browser tests on every
+push. See [CONTRIBUTING.md](CONTRIBUTING.md) for running the wallet-signed suite.
 
 ## Testnet verification
 
@@ -110,6 +114,7 @@ can be checked on stellar.expert.
 | [5 members, 5 rounds](docs/testnet/five-member-cycle-xlm.md) | XLM | 36 |
 | [3 members, 3 rounds](docs/testnet/three-member-cycle-usdc.md) | USDC | 16 |
 | [Regression run: 19 scenarios](docs/testnet/regression-run.jsonl) | XLM | 14 submitted, 5 expected rejections |
+| [Browser run: 3 members, 3 rounds, wallet-signed through the web app](docs/testnet/browser-e2e-run.md) | XLM | 16 |
 
 Test accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md).
 
@@ -117,11 +122,17 @@ Test accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md).
 
 Halka is a testnet prototype and **has not been audited**. Do not use it with real funds. The web
 app never generates, stores or transmits private keys; all signing happens in the user's wallet.
-Please report vulnerabilities by opening an issue.
+Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, tests and the pull
+request process.
 
 ## Roadmap
 
-- [ ] Manual end-to-end testing with browser wallets ([guide](docs/manual-testing.md))
+- [x] Browser end-to-end test with wallet-signed testnet transactions
+- [ ] Manual testing with the Freighter, Albedo and Hana extensions ([guide](docs/manual-testing.md))
 - [ ] Fair payout order using verifiable randomness
 - [ ] Late-payment and default handling beyond timeout reclaim
 - [ ] Yield on idle pool balances

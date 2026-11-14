@@ -9,6 +9,8 @@ Next.js 16 (App Router) + TypeScript + Tailwind v4 web app. Talks to the Halka S
 npm install
 npm run dev      # http://localhost:3000
 npm run build
+npm test              # unit and component tests (Vitest)
+npm run test:e2e      # browser tests (Playwright, uses the installed Google Chrome)
 npm run test:contract # requires dedicated testnet account secrets; see ../docs/wallet-integration.md
 ```
 
