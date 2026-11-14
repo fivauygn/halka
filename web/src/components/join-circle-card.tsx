@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { getWalletClient } from "@/lib/circle-client";
-import { describeError } from "@/lib/errors";
+import { contractCallError, describeError } from "@/lib/errors";
 import { formatTokenAmount, truncateAddress } from "@/lib/format";
 import { useCircle } from "@/lib/use-circle";
 import { useWallet } from "@/lib/wallet";
@@ -42,7 +42,7 @@ export function JoinCircleCard({ circleId }: { circleId: bigint }) {
       const client = getWalletClient(address);
       const tx = await client.join_circle({ circle_id: circleId, member: address });
       const sent = await tx.signAndSend();
-      if (sent.result.isErr()) throw new Error(sent.result.unwrapErr().message);
+      if (sent.result.isErr()) throw contractCallError(sent);
       await refetch();
       router.push(`/circle/${circleId}`);
     } catch (e) {

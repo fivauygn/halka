@@ -6,7 +6,7 @@ import { StrKey } from "@stellar/stellar-sdk";
 
 import { getWalletClient } from "@/lib/circle-client";
 import { TOKEN_OPTIONS } from "@/lib/config";
-import { describeError } from "@/lib/errors";
+import { contractCallError, describeError } from "@/lib/errors";
 import { parseTokenAmount } from "@/lib/format";
 import { useWallet } from "@/lib/wallet";
 
@@ -89,7 +89,7 @@ export function CreateCircleForm() {
       const sent = await tx.signAndSend();
       const result = sent.result;
       if (result.isErr()) {
-        throw new Error(result.unwrapErr().message);
+        throw contractCallError(sent);
       }
       const circleId = result.unwrap();
       router.push(`/circle/${circleId}`);
