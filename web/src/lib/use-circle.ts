@@ -3,7 +3,7 @@
 import useSWR from "swr";
 
 import { getReadOnlyClient } from "@/lib/circle-client";
-import { contractErrorMessage, describeError } from "@/lib/errors";
+import { contractCallError, describeError } from "@/lib/errors";
 
 export interface MemberState {
   address: string;
@@ -16,7 +16,7 @@ async function fetchCircle(circleId: bigint) {
   const circleTx = await client.get_circle({ circle_id: circleId });
   const circleResult = circleTx.result;
   if (circleResult.isErr()) {
-    throw new Error(contractErrorMessage(circleResult.unwrapErr().message));
+    throw contractCallError(circleTx);
   }
   const circle = circleResult.unwrap();
 

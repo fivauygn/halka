@@ -12,8 +12,9 @@ export function formatTokenAmount(stroops: bigint, decimals = 7): string {
 export function parseTokenAmount(input: string, decimals = 7): bigint {
   const trimmed = input.trim();
   if (!trimmed) throw new Error("Amount cannot be empty.");
-  const [wholePart, fracPart = ""] = trimmed.split(".");
-  if (!/^\d*$/.test(wholePart) || !/^\d*$/.test(fracPart) || (!wholePart && !fracPart)) {
+  const parts = trimmed.split(".");
+  const [wholePart, fracPart = ""] = parts;
+  if (parts.length > 2 || !/^\d*$/.test(wholePart) || !/^\d*$/.test(fracPart) || (!wholePart && !fracPart)) {
     throw new Error("Invalid amount.");
   }
   const paddedFrac = (fracPart + "0".repeat(decimals)).slice(0, decimals);

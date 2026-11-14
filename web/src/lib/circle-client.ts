@@ -1,7 +1,7 @@
 import { Client, Errors, networks, rpc } from "@/lib/contracts/circle";
 import { RPC_URL } from "@/lib/config";
 import type { Circle } from "@/lib/contracts/circle";
-import { contractErrorMessage } from "@/lib/errors";
+import { contractCallError, contractErrorMessage } from "@/lib/errors";
 
 /** Read-only client for simulated (non-signing) contract calls. */
 export function getReadOnlyClient() {
@@ -51,7 +51,7 @@ export function getWalletClient(address: string) {
 export async function simulatePayoutEligibility(circleId: bigint): Promise<void> {
   const tx = await getReadOnlyClient().payout({ circle_id: circleId });
   if (tx.result.isErr()) {
-    throw new Error(contractErrorMessage(tx.result.unwrapErr().message));
+    throw contractCallError(tx);
   }
 }
 
@@ -64,7 +64,7 @@ export async function preflightCircleAction(
   const client = getReadOnlyClient();
   const tx = await client.get_circle({ circle_id: circleId });
   if (tx.result.isErr()) {
-    throw new Error(contractErrorMessage(tx.result.unwrapErr().message));
+    throw contractCallError(tx);
   }
   const circle = tx.result.unwrap();
   const member = circle.members.includes(address);
@@ -80,7 +80,7 @@ export async function preflightCircleAction(
 
   if (action === "deposit") {
     const deposited = await client.has_deposited_current_round({ circle_id: circleId, member: address });
-    if (deposited.result.isErr()) throw new Error(contractErrorMessage(deposited.result.unwrapErr().message));
+    if (deposited.result.isErr()) throw contractCallError(deposited);
     if (deposited.result.unwrap()) throw new Error(contractErrorMessage("AlreadyDepositedThisRound"));
   }
   if (action === "payout" && circle.round_deposit_count !== circle.members.length) {
@@ -89,7 +89,7 @@ export async function preflightCircleAction(
   if (action === "reclaim") {
     if (now < circle.round_deadline) throw new Error(contractErrorMessage("RoundNotTimedOut"));
     const deposited = await client.has_deposited_current_round({ circle_id: circleId, member: address });
-    if (deposited.result.isErr()) throw new Error(contractErrorMessage(deposited.result.unwrapErr().message));
+    if (deposited.result.isErr()) throw contractCallError(deposited);
     if (!deposited.result.unwrap()) throw new Error(contractErrorMessage("NothingToReclaim"));
   }
 

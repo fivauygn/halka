@@ -1,3 +1,5 @@
+import { Errors } from "@/lib/contracts/circle";
+
 const CONTRACT_ERROR_MESSAGES: Record<string, string> = {
   InvalidMemberCount: "A circle must have at least 2 members.",
   DuplicateMember: "The member list has the same address more than once.",
@@ -21,6 +23,23 @@ export function contractErrorMessage(name: string | undefined): string {
   return CONTRACT_ERROR_MESSAGES[name] ?? name;
 }
 
+interface FailedContractCall {
+  result: { unwrapErr(): { message?: string } };
+  simulation?: unknown;
+}
+
+/** Turns a failed contract call into an Error with a plain-language message. The SDK can return
+ * an empty error message, so the contract error code is also read from the simulation result. */
+export function contractCallError(call: FailedContractCall): Error {
+  let name = call.result.unwrapErr().message;
+  if (!name) {
+    const raw = String((call.simulation as { error?: unknown } | undefined)?.error ?? "");
+    const code = raw.match(/Error\(Contract, #(\d+)\)/)?.[1];
+    name = code ? Errors[Number(code) as keyof typeof Errors]?.message : undefined;
+  }
+  return new Error(contractErrorMessage(name));
+}
+
 /** Turns any thrown error (wallet rejection, network failure, contract
  * error) into a message safe to show the user directly. */
 export function describeError(err: unknown): string {
@@ -40,7 +59,7 @@ export function describeError(err: unknown): string {
   if (lower.includes("wallet") && lower.includes("not found")) {
     return "No compatible wallet was found. Install a supported wallet or select another option.";
   }
-  if (lower.includes("failed to fetch") || lower.includes("network")) {
+  if (lower.includes("failed to fetch") || lower.includes("network error") || lower.includes("networkerror")) {
     return "Network error — could not reach the Stellar testnet. Please try again.";
   }
 
