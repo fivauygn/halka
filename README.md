@@ -1,64 +1,132 @@
-# Halka — Digital "Altın Günü"
+# Halka
 
-A dApp that digitizes Türkiye's traditional altın günü / rotating savings circle model on
-Stellar Soroban, without custody risk. A group pays a fixed contribution every round; the pool
-is automatically paid out to the member whose turn it is once that round is complete — the money
-is never held by a single person or institution.
+[![CI](https://github.com/fivauygn/halka/actions/workflows/ci.yml/badge.svg)](https://github.com/fivauygn/halka/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Network: Stellar Testnet](https://img.shields.io/badge/network-Stellar%20testnet-black)
 
-## Project structure
+**Non-custodial rotating savings circles on Stellar Soroban.**
+
+Halka brings the *altın günü*, Türkiye's traditional rotating savings circle (ROSCA), on-chain. A
+fixed group contributes the same amount every round, and once everyone has paid in, the whole
+pool goes to the member whose turn it is. The rules live in a Soroban smart contract, so no
+organizer or platform ever holds the group's money.
+
+**Live app:** [halkawebapp.vercel.app](https://halkawebapp.vercel.app) · **Testnet contract:**
+[`CBOGI62M…37HUI5Q`](https://stellar.expert/explorer/testnet/contract/CBOGI62MN5V3M7QSOKS7E6YWLLAO73LJIS3TMBMEFIADG2LDC37HUI5Q)
+
+![Halka web app: create a new circle](docs/screenshots/01-home-create-circle.png)
+
+<details>
+<summary>More screenshots</summary>
+
+| Completed 5-member circle | Completed 3-member circle | Invite link, circle closed |
+| --- | --- | --- |
+| ![Circle 1 dashboard](docs/screenshots/03-circle-1-completed.png) | ![Circle 0 dashboard](docs/screenshots/02-circle-0-completed.png) | ![Join page](docs/screenshots/04-join-flow-closed.png) |
+
+</details>
+
+## Features
+
+- **Non-custodial pool:** contributions are held by the contract and paid out only by its rules.
+- **Fixed membership and payout order:** set at creation; every member confirms by joining.
+- **Permissionless payout:** anyone can trigger a payout once a round is fully funded.
+- **Timeout reclaim:** if a round stalls, each member can withdraw their own contribution.
+- **Any Stellar asset:** works with any Stellar Asset Contract (verified with XLM and USDC).
+- **Multi-wallet web app:** Freighter, Albedo and Hana via Stellar Wallets Kit.
+- **Transaction preflight:** the app checks circle state and simulates every call before asking
+  the wallet to sign, so contract errors are explained in plain language instead of failing on-chain.
+
+## How it works
+
+```
+create_circle ──► join_circle × N ──► Active
+                                        │
+                     ┌──────────────────┘
+                     ▼
+              deposit × N ──► payout ──► next round ──► … ──► Completed
+                     │
+                     └── round timed out ──► reclaim (each member, own funds)
+```
+
+See [docs/architecture.md](docs/architecture.md) for the data model, the contract API and design
+decisions.
+
+## Repository structure
 
 ```
 .
-├── contracts/
-│   └── circle/           # Rust/Soroban contract: create_circle, join_circle, deposit, payout, reclaim
-│       ├── src/lib.rs
-│       └── src/test.rs
-├── web/                  # Next.js web app (Stellar Wallets Kit, Soroban preflight)
-├── docs/                 # Architecture and verification logs
-├── .github/workflows/    # CI: cargo test + stellar contract build
-└── Cargo.toml            # Workspace root
+├── contracts/circle/   # Soroban smart contract (Rust) and unit tests
+├── web/                # Next.js web app (TypeScript, Tailwind, Stellar Wallets Kit)
+├── docs/               # Architecture, wallet integration and testnet verification logs
+└── .github/workflows/  # CI: contract tests and build, web lint, typecheck and build
 ```
 
-## Contract development
+## Getting started
+
+### Prerequisites
+
+- [Rust](https://rustup.rs) (stable) with the `wasm32v1-none` target
+- [Stellar CLI](https://developers.stellar.org/docs/tools/cli) v27 or later
+- [Node.js](https://nodejs.org) 24 or later
+
+### Smart contract
 
 ```bash
-cargo test --workspace        # run unit tests (21 tests)
-stellar contract build        # build for the wasm32v1-none target
+rustup target add wasm32v1-none
+cargo test --workspace      # run the unit tests
+stellar contract build      # build the Wasm binary
 ```
 
-## Testnet
-
-- **Contract ID:** `CBOGI62MN5V3M7QSOKS7E6YWLLAO73LJIS3TMBMEFIADG2LDC37HUI5Q`
-- **Web app (live):** https://halkawebapp.vercel.app
-- End-to-end verification (tx-hash log): [docs/testnet/first-round-xlm.md](docs/testnet/first-round-xlm.md), [docs/testnet/five-member-cycle-xlm.md](docs/testnet/five-member-cycle-xlm.md) (native XLM SAC), [docs/testnet/three-member-cycle-usdc.md](docs/testnet/three-member-cycle-usdc.md) (real testnet Circle USDC SAC)
-- Architecture & setup: [docs/architecture.md](docs/architecture.md)
-- Testnet accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md)
-
-## Web app
+### Web app
 
 ```bash
 cd web
 npm install
-npm run dev      # http://localhost:3000
+npm run dev                 # http://localhost:3000
 ```
 
-Next.js 16 (App Router) + TypeScript + Tailwind v4. Contract integration goes through a
-type-safe client generated with `stellar contract bindings typescript` and relocated to
-`web/src/lib/contracts/circle.ts`; wallet connection uses Stellar Wallets Kit for Freighter/Varial,
-Albedo, and Hana. See [web/README.md](web/README.md) for details.
+The app connects to the deployed testnet contract by default. Configuration (RPC URL and token
+contracts) lives in [`web/src/lib/config.ts`](web/src/lib/config.ts). See
+[web/README.md](web/README.md) for details.
 
-## Status
+## Testing
 
-- [x] Environment setup (Rust + wasm32v1-none + Stellar CLI)
-- [x] Workspace scaffold
-- [x] Circle/Member data model
-- [x] create_circle / join_circle
-- [x] deposit / payout / reclaim
-- [x] Testnet deploy + CLI end-to-end verification
-- [x] Web app (Freighter) — live on Vercel, connected to the real testnet contract
-- [x] Full 5-member/5-round demo cycle (CLI, real testnet)
-- [x] Full 3-member/3-round demo cycle with real testnet USDC (CLI, real testnet)
-- [x] Stellar Wallets Kit integration for Freighter/Varial, Albedo, and Hana
-- [x] Client-side Soroban RPC preflight for deposit, payout, and reclaim
-- [x] Testnet contract regression harness and security/integration documentation
-- [ ] Manual wallet acceptance matrix and UI demo video (requires browser wallets)
+| Layer | How | Where |
+| --- | --- | --- |
+| Contract unit tests | `cargo test --workspace` (21 tests) | [`contracts/circle/src/test.rs`](contracts/circle/src/test.rs) |
+| Web app | `npm run lint`, `npx tsc --noEmit`, `npm run build` | [`web/`](web/) |
+| Testnet regression | `npm run test:contract` against the live contract | [docs/wallet-integration.md](docs/wallet-integration.md#testnet-regression-harness) |
+
+All contract and web checks run in [CI](https://github.com/fivauygn/halka/actions) on every push.
+
+## Testnet verification
+
+Every run below executed on Stellar testnet against the deployed contract, and every transaction
+can be checked on stellar.expert.
+
+| Run | Token | Transactions |
+| --- | --- | --- |
+| [Deployment and first round](docs/testnet/first-round-xlm.md) | XLM | 10 |
+| [5 members, 5 rounds](docs/testnet/five-member-cycle-xlm.md) | XLM | 36 |
+| [3 members, 3 rounds](docs/testnet/three-member-cycle-usdc.md) | USDC | 16 |
+| [Regression run: 19 scenarios](docs/testnet/regression-run.jsonl) | XLM | 14 submitted, 5 expected rejections |
+
+Test accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md).
+
+## Security
+
+Halka is a testnet prototype and **has not been audited**. Do not use it with real funds. The web
+app never generates, stores or transmits private keys; all signing happens in the user's wallet.
+Please report vulnerabilities by opening an issue.
+
+## Roadmap
+
+- [ ] Manual end-to-end testing with browser wallets ([guide](docs/manual-testing.md))
+- [ ] Fair payout order using verifiable randomness
+- [ ] Late-payment and default handling beyond timeout reclaim
+- [ ] Yield on idle pool balances
+- [ ] Security audit before any mainnet deployment
+
+## License
+
+[MIT](LICENSE)
