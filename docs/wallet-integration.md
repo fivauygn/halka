@@ -39,7 +39,7 @@ unavailable"** action. It simulates `payout` and shows the result without reques
 | Contract error | Message shown before signing |
 | --- | --- |
 | `AlreadyDepositedThisRound` | You've already deposited your contribution for this round. |
-| `NotMember` | This address is not a member of this circle. |
+| `NotMember` | Your connected wallet is not an eligible member of this circle. |
 | `RoundNotComplete` | Not all members have contributed for this round yet. |
 | `RoundNotTimedOut` | The reclaim window for this round hasn't opened yet. |
 | `NothingToReclaim` | You have no contribution to reclaim. |
@@ -75,7 +75,23 @@ The run on 2026-11-11 created circles 20 and 21. All 19 scenarios passed: 14 sub
 transactions and 5 expected rejections. See
 [testnet/regression-run.jsonl](testnet/regression-run.jsonl).
 
+## Browser tests
+
+[`web/e2e/`](../web/e2e/) contains Playwright tests that run the production build in Chrome. They
+connect through Stellar Wallets Kit's Freighter option using
+[`fake-freighter.ts`](../web/e2e/fake-freighter.ts), a test implementation of the Freighter
+extension's page protocol. The app's wallet code runs unmodified, while signing happens in the test
+process with testnet keys that never enter the page.
+
+- **Read-only suite (runs in CI):** wallet connect and disconnect, rejection of a wallet on the
+  wrong network, form validation before any signature, a completed circle's payout history, and a
+  closed invite link.
+- **Wallet-signed lifecycle (runs with three funded testnet accounts):** create, join ×3, then
+  deposit ×3 and payout in each of three rounds, including the read-only payout check. The latest
+  run is recorded in [testnet/browser-e2e-run.md](testnet/browser-e2e-run.md).
+
 ## Manual wallet testing
 
-The harness exercises the contract directly with CLI keys. Testing the full flow through each
-browser wallet is still open; see the [manual testing guide](manual-testing.md).
+The browser tests emulate Freighter's protocol; they do not exercise the real extensions' own
+interfaces. Testing with the Freighter, Albedo and Hana extensions is still open; see the
+[manual testing guide](manual-testing.md).
