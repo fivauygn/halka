@@ -87,27 +87,22 @@ deposits + 1 payout → `round_index` advances, new deadline set → after the l
 - **`reclaim` is per-member after a timeout:** if a round stalls (a member fails to deposit),
   the other members' funds don't stay locked forever — each of them can independently withdraw
   their own share.
-- **Fixed `payout_order`:** the scope was deliberately kept narrow; a random/fair ordering
-  (drand-based) is a possible future extension.
-- **CLI demos use native XLM:** the testnet USDC SAC is verified and ready to use
-  (`CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`), but since Circle's faucet
-  (faucet.circle.com) requires a manual browser step, the CLI-driven verification runs used
-  native XLM instead — since the contract's `token` parameter is generic, switching to USDC in
-  production is just a different address, no contract changes needed.
+- **Fixed `payout_order`:** the creator sets the order up front, which keeps the contract small
+  and predictable. A verifiable random ordering is a possible future extension.
+- **Generic `token`:** the contract accepts any Stellar Asset Contract address, so the same
+  deployment works with native XLM and testnet USDC without code changes (both are verified in
+  [testnet/](testnet/)).
 
 ## Known limitations
 
-- No random/fair payout-order draw (fixed order, set by the creator).
-- No late-payment/default penalty mechanism (only reclaim-after-timeout).
-- No yield generation on the pool balance.
-- Fiat on/off ramps, a mobile app, and passkey onboarding are out of scope.
-- No security audit has been performed — this is a testnet prototype.
+- No random payout-order draw; the creator sets a fixed order.
+- No late-payment or default penalty; a stalled round can only be unwound by timeout reclaim.
+- No yield on pooled balances.
+- Fiat on/off ramps, a mobile app and passkey onboarding are out of scope.
+- The contract has not been audited; it is a testnet prototype.
 
-## Wallet and preflight implementation
+## Web app
 
-The web app uses Stellar Wallets Kit for Freighter/Varial, Albedo, and Hana on Testnet. Deposit,
-payout, and reclaim first refresh the contract state through Soroban RPC and check the active round,
-member deposit, payout, or timeout condition. The generated Soroban client simulates the unsigned
-invocation before the selected wallet signs it. Simulation is advisory; contract code remains the
-final enforcement layer. The app does not generate or store private keys, or sign transactions on
-the server.
+The web app uses Stellar Wallets Kit (Freighter, Albedo, Hana) and simulates every deposit,
+payout and reclaim through Soroban RPC before the wallet signs. It never generates, stores or
+transmits private keys. See [wallet-integration.md](wallet-integration.md).

@@ -9,7 +9,7 @@ Next.js 16 (App Router) + TypeScript + Tailwind v4 web app. Talks to the Halka S
 npm install
 npm run dev      # http://localhost:3000
 npm run build
-npm run test:contract # requires dedicated testnet account secrets
+npm run test:contract # requires dedicated testnet account secrets; see ../docs/wallet-integration.md
 ```
 
 ## Contract integration
@@ -27,7 +27,7 @@ The picker is limited to Freighter/Varial, Albedo, and Hana. The Kit signs trans
 authorization entries in the selected wallet. Halka never stores private keys or signing material.
 Before deposit, payout, or reclaim, the app checks current circle state and constructs the unsigned
 Soroban call, which is simulated by Soroban RPC before the wallet is asked to sign. Simulation is
-advisory; contract rules remain authoritative.
+advisory; contract rules remain authoritative. See [wallet integration](../docs/wallet-integration.md).
 
 ## Pages
 
