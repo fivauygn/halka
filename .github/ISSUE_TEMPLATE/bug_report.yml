@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in the contract or web app does not work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Web app
+        - Smart contract
+        - Tests or tooling
+        - Documentation
+    validations:
+      required: true
+  - type: dropdown
+    id: wallet
+    attributes:
+      label: Wallet
+      options:
+        - Not wallet related
+        - Freighter (shown as Varial)
+        - Albedo
+        - Hana
+  - type: input
+    id: tx
+    attributes:
+      label: Testnet transaction or circle
+      description: A stellar.expert link or circle ID, if relevant.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, wallet version, and commit or page URL.

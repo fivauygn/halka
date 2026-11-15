@@ -1,0 +1,66 @@
+name: Testnet
+
+# Runs the contract regression harness and the wallet-signed browser lifecycle against the deployed
+# testnet contract, with fresh Friendbot-funded accounts. Weekly runs catch network upgrades early.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testnet
+  cancel-in-progress: false
+
+jobs:
+  testnet:
+    name: Regression harness + browser lifecycle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create funded testnet accounts
+        run: >
+          npx tsx scripts/fund-testnet-accounts.ts
+          HALKA_TESTNET_CREATOR_SECRET HALKA_TESTNET_MEMBER1_SECRET
+          HALKA_TESTNET_MEMBER2_SECRET HALKA_TESTNET_OUTSIDER_SECRET
+          HALKA_E2E_MEMBER1_SECRET HALKA_E2E_MEMBER2_SECRET HALKA_E2E_MEMBER3_SECRET
+
+      - name: Contract regression harness
+        run: npm run test:contract
+        env:
+          HALKA_TX_LOG: ${{ runner.temp }}/regression-run.jsonl
+
+      - name: Build
+        run: npm run build
+
+      - name: Wallet-signed browser lifecycle
+        run: npx playwright test e2e/circle-lifecycle.spec.ts
+        env:
+          CI: "true"
+          HALKA_E2E_TX_LOG: ${{ runner.temp }}/browser-e2e-run.jsonl
+
+      - name: Upload transaction logs and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testnet-run
+          path: |
+            ${{ runner.temp }}/*.jsonl
+            web/playwright-report
+          retention-days: 30
