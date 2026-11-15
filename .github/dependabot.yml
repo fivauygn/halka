@@ -1,10 +1,15 @@
 version: 2
 updates:
+  # Major versions need a manual migration (and, for the contract, a redeploy so the deployed
+  # Wasm keeps matching this source), so Dependabot only proposes minor and patch updates.
   - package-ecosystem: npm
     directory: /web
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       minor-and-patch:
         update-types: [minor, patch]
@@ -14,6 +19,9 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
