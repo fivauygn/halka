@@ -10,6 +10,7 @@ import {
 
 import { networks } from "@/lib/contracts/circle";
 import { describeError } from "@/lib/errors";
+import { walletNetworkPassphrase } from "@/lib/wallet-network";
 
 interface WalletState {
   address: string | null;
@@ -48,8 +49,10 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       });
 
       const connected = await StellarWalletsKit.authModal();
-      const network = await StellarWalletsKit.getNetwork();
-      if (network.networkPassphrase !== networks.testnet.networkPassphrase) {
+      // Null for wallets that cannot report their network (Albedo, Hana); every signing request
+      // still carries the Testnet passphrase.
+      const passphrase = await walletNetworkPassphrase(() => StellarWalletsKit.getNetwork());
+      if (passphrase !== null && passphrase !== networks.testnet.networkPassphrase) {
         await StellarWalletsKit.disconnect();
         throw new Error("Your wallet is not on the Stellar Testnet. Switch networks in the wallet and reconnect.");
       }

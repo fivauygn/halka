@@ -7,20 +7,21 @@ export or server-side signing path.
 ## Wallet compatibility matrix
 
 Stellar Wallets Kit (v2.8) is configured for Testnet and limited to three wallets. The user picks
-one in the Kit modal; the app checks that the wallet reports the Testnet passphrase before
-accepting the connection.
+one in the Kit modal. If the wallet can report its network (Freighter), the app refuses a
+connection that is not on Testnet. Albedo and Hana cannot report their network, so for them the
+app relies on the Testnet passphrase it sends with every signing request.
 
 | Wallet | Kit module | Shown in the picker as | Automated coverage | Manual acceptance | Known limitations and fallback |
 | --- | --- | --- | --- | --- | --- |
 | Freighter | `varial`, built on `@stellar/freighter-api` | **Varial** | Full lifecycle, 16 signed testnet transactions ([run](testnet/browser-e2e-run.md)) | See [acceptance report](acceptance-report.md) | Kit 2.8 serves Freighter through its `varial` module, so the picker labels it Varial; it talks to the installed Freighter extension. If no extension is detected, the entry shows **Install**. |
-| Albedo | `albedo`, built on `@albedo-link/intent` | **Albedo** | Not covered (Albedo signs in its own albedo.link window) | See [acceptance report](acceptance-report.md) | Web-based, nothing to install; the user must create or select an account in Albedo's window, and the browser must allow albedo.link to open. |
-| Hana | `hana` | **Hana Wallet** | Not covered (needs the extension) | See [acceptance report](acceptance-report.md) | If the extension is not installed, the entry shows **Install** and links to the wallet. |
+| Albedo | `albedo`, built on `@albedo-link/intent` | **Albedo** | Not covered (Albedo signs in its own albedo.link window) | See [acceptance report](acceptance-report.md) | Web-based, nothing to install; the user must create or select an account in Albedo's window, and the browser must allow albedo.link to open. Does not report its network; signing requests carry the Testnet passphrase. |
+| Hana | `hana` | **Hana Wallet** | Not covered (needs the extension) | See [acceptance report](acceptance-report.md) | If the extension is not installed, the entry shows **Install** and links to the wallet. Does not report its network; signing requests carry the Testnet passphrase. |
 
 Fallbacks shown to the user in every wallet:
 
 | Situation | Message |
 | --- | --- |
-| Wallet is on another network | Your wallet is not on the Stellar Testnet. Switch networks in the wallet and reconnect. |
+| Wallet reports another network (Freighter) | Your wallet is not on the Stellar Testnet. Switch networks in the wallet and reconnect. |
 | User closes the wallet picker | Wallet selection was cancelled. |
 | User rejects the signature | The transaction was not approved in the wallet. |
 | No usable wallet | No compatible wallet was found. Install a supported wallet or select another option. |
