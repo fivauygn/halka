@@ -116,19 +116,23 @@ export function CreateCircleForm() {
       </div>
 
       <div className="space-y-3">
-        <label className="text-sm font-medium">Members</label>
+        <p id="members-label" className="text-sm font-medium">Members</p>
         {members.map((member, index) => (
-          <div key={index} className="flex gap-2">
+          <div key={index} role="group" aria-labelledby="members-label" className="flex gap-2">
             <input
               value={member}
               onChange={(e) => updateMember(index, e.target.value)}
               placeholder={`Member ${index + 1} address (G…)`}
+              aria-label={`Member ${index + 1} address`}
+              autoComplete="off"
+              spellCheck={false}
               className="flex-1 rounded-lg border border-card-border bg-background px-3 py-2 font-mono text-sm outline-none focus:border-turquoise"
             />
             {members.length > 2 && (
               <button
                 type="button"
                 onClick={() => removeMember(index)}
+                aria-label={`Remove member ${index + 1}`}
                 className="rounded-lg px-3 text-sm text-muted hover:bg-terracotta/10 hover:text-terracotta"
               >
                 Remove
@@ -147,8 +151,9 @@ export function CreateCircleForm() {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">Token</label>
+          <label htmlFor="token" className="text-sm font-medium">Token</label>
           <select
+            id="token"
             value={tokenId}
             onChange={(e) => setTokenId(e.target.value)}
             className="mt-1 w-full rounded-lg border border-card-border bg-background px-3 py-2 text-sm outline-none focus:border-turquoise"
@@ -161,8 +166,9 @@ export function CreateCircleForm() {
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium">Round duration (hours)</label>
+          <label htmlFor="round-duration" className="text-sm font-medium">Round duration (hours)</label>
           <input
+            id="round-duration"
             type="number"
             min={1}
             value={timeoutHours}
@@ -173,8 +179,12 @@ export function CreateCircleForm() {
       </div>
 
       <div>
-        <label className="text-sm font-medium">Contribution amount (per member / round)</label>
+        <label htmlFor="contribution" className="text-sm font-medium">
+          Contribution amount (per member / round)
+        </label>
         <input
+          id="contribution"
+          inputMode="decimal"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="10"
@@ -182,7 +192,11 @@ export function CreateCircleForm() {
         />
       </div>
 
-      {error && <p className="text-sm text-terracotta">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-terracotta">
+          {error}
+        </p>
+      )}
 
       {address ? (
         <button

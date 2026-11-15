@@ -32,7 +32,11 @@ export function WalletButton() {
       >
         {isConnecting ? "Connecting…" : "Connect wallet"}
       </button>
-      {error && <p className="max-w-xs text-right text-xs text-terracotta">{error}</p>}
+      {error && (
+        <p role="alert" className="max-w-xs text-right text-xs text-terracotta">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { getWalletClient, preflightCircleAction, simulatePayoutEligibility } from "@/lib/circle-client";
+import { stellarExpertTxUrl } from "@/lib/config";
 import { contractCallError, describeError } from "@/lib/errors";
 import { formatTokenAmount, truncateAddress } from "@/lib/format";
 import { useCircle } from "@/lib/use-circle";
@@ -22,10 +23,16 @@ const STATUS_STYLE: Record<string, string> = {
   Completed: "bg-nazar-blue/15 text-nazar-blue-dark dark:text-nazar-blue",
 };
 
+interface Notice {
+  text: string;
+  txHash?: string;
+}
+
 export function CircleDashboard({ circleId }: { circleId: bigint }) {
   const { address, connect } = useWallet();
   const { circle, members, loading, error, refetch } = useCircle(circleId);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
@@ -34,11 +41,12 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
     return () => clearInterval(id);
   }, []);
 
-  async function runAction(name: string, fn: () => Promise<void>) {
+  async function runAction(name: string, fn: () => Promise<Notice>) {
     setActionError(null);
+    setNotice(null);
     setPendingAction(name);
     try {
-      await fn();
+      setNotice(await fn());
       await refetch();
     } catch (e) {
       setActionError(describeError(e));
@@ -160,7 +168,29 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
       )}
 
       <div className="space-y-3">
-        {actionError && <p className="text-sm text-terracotta">{actionError}</p>}
+        {actionError && (
+          <p role="alert" className="text-sm text-terracotta">
+            {actionError}
+          </p>
+        )}
+        {notice && (
+          <p role="status" className="text-sm text-turquoise-dark dark:text-turquoise">
+            {notice.text}
+            {notice.txHash && (
+              <>
+                {" "}
+                <a
+                  href={stellarExpertTxUrl(notice.txHash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium underline"
+                >
+                  View transaction
+                </a>
+              </>
+            )}
+          </p>
+        )}
 
         {canCheckPayout && (
           <button
@@ -168,7 +198,7 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
             onClick={() =>
               runAction("payout-check", async () => {
                 await simulatePayoutEligibility(circleId);
-                setActionError("Payout is now eligible. Connect a wallet to trigger it.");
+                return { text: "Payout is now eligible. Connect a wallet to trigger it." };
               })
             }
             className="w-full rounded-full border border-card-border px-4 py-2.5 text-sm font-medium text-foreground disabled:opacity-50"
@@ -203,6 +233,7 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
                 const tx = await client.join_circle({ circle_id: circleId, member: address! });
                 const sent = await tx.signAndSend();
                 if (sent.result.isErr()) throw contractCallError(sent);
+                return { text: "Joined the circle.", txHash: sent.sendTransactionResponse?.hash };
               })
             }
           />
@@ -220,6 +251,7 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
                 if (tx.result.isErr()) throw contractCallError(tx);
                 const sent = await tx.signAndSend();
                 if (sent.result.isErr()) throw contractCallError(sent);
+                return { text: "Deposit confirmed.", txHash: sent.sendTransactionResponse?.hash };
               })
             }
           />
@@ -238,6 +270,7 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
                 if (tx.result.isErr()) throw contractCallError(tx);
                 const sent = await tx.signAndSend();
                 if (sent.result.isErr()) throw contractCallError(sent);
+                return { text: "Contribution reclaimed.", txHash: sent.sendTransactionResponse?.hash };
               })
             }
           />
@@ -257,6 +290,7 @@ export function CircleDashboard({ circleId }: { circleId: bigint }) {
                 if (tx.result.isErr()) throw contractCallError(tx);
                 const sent = await tx.signAndSend();
                 if (sent.result.isErr()) throw contractCallError(sent);
+                return { text: "Payout sent.", txHash: sent.sendTransactionResponse?.hash };
               })
             }
           />

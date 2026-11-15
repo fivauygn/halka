@@ -105,7 +105,11 @@ export function JoinCircleCard({ circleId }: { circleId: bigint }) {
             </button>
           )}
 
-          {joinError && <p className="text-sm text-terracotta">{joinError}</p>}
+          {joinError && (
+            <p role="alert" className="text-sm text-terracotta">
+              {joinError}
+            </p>
+          )}
         </>
       )}
 

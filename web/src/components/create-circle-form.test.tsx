@@ -89,7 +89,7 @@ describe("CreateCircleForm", () => {
 
     await user.clear(amount);
     await user.type(amount, "5");
-    const duration = screen.getByRole("spinbutton");
+    const duration = screen.getByLabelText("Round duration (hours)");
     await user.clear(duration);
     await user.type(duration, "0");
     // The duration input has min=1, so the browser's own validation blocks submission.
@@ -102,12 +102,12 @@ describe("CreateCircleForm", () => {
     const user = userEvent.setup();
     render(<CreateCircleForm />);
 
-    expect(screen.queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Remove member/ })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "+ Add member" }));
-    expect(screen.getByPlaceholderText("Member 3 address (G…)")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "Remove" })).toHaveLength(3);
+    expect(screen.getByRole("textbox", { name: "Member 3 address" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Remove member/ })).toHaveLength(3);
 
-    await user.click(screen.getAllByRole("button", { name: "Remove" })[2]);
+    await user.click(screen.getByRole("button", { name: "Remove member 3" }));
     expect(screen.queryByPlaceholderText("Member 3 address (G…)")).not.toBeInTheDocument();
   });
 
@@ -119,7 +119,7 @@ describe("CreateCircleForm", () => {
     const amount = screen.getByPlaceholderText("10");
     await user.clear(amount);
     await user.type(amount, "2.5");
-    const duration = screen.getByRole("spinbutton");
+    const duration = screen.getByLabelText("Round duration (hours)");
     await user.clear(duration);
     await user.type(duration, "1");
     await user.click(screen.getByRole("button", { name: "Create circle" }));
