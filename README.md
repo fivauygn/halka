@@ -29,10 +29,10 @@ organizer or platform ever holds the group's money.
 
 A full circle on the live app, seen from one member's screen: connect, create, join, deposit, a
 read-only payout check, and payouts over three rounds until the circle completes (93 s, captioned,
-waiting periods sped up). The run is automated with Playwright
-([`web/e2e/demo-video.spec.ts`](web/e2e/demo-video.spec.ts)); members connect through Stellar
-Wallets Kit's Freighter option, backed by a test implementation of the Freighter wallet protocol,
-and every transaction is confirmed on testnet.
+waiting periods sped up). Members connect through Stellar Wallets Kit's Freighter option, backed
+by a test implementation of the Freighter wallet protocol, and every transaction is confirmed on
+testnet. Results with the real Freighter, Albedo and Hana wallets are in the
+[acceptance report](docs/acceptance-report.md).
 
 [![Demo video: three members completing a circle on the live app](docs/media/halka-demo-poster.jpg)](docs/media/halka-demo.mp4)
 
