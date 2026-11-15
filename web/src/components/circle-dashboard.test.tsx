@@ -6,6 +6,7 @@ const A = "GAMYNYJR2UILL4GXGNPUSFQBMKDBXV2EVLHOIYFH34FTORBY7ULTJHIU";
 const B = "GBTKI7JP6WXFBBSW6CORWJQIVUCZFKCYU2MAV3552RY4ZZDEOI2AXANG";
 const C = "GC2F6KCU2QHJXYBSFIWPYX5REDFSOI7ODTK3O2OUJCDIXYJJVT2FHWGC";
 
+const TX_HASH = "a".repeat(64);
 const wallet = { address: null as string | null, connect: vi.fn() };
 const refetch = vi.fn();
 const circleState = {
@@ -51,7 +52,7 @@ beforeEach(() => {
   wallet.address = null;
   preflight.mockResolvedValue(undefined);
   deposit.mockResolvedValue({ result: { isErr: () => false }, signAndSend });
-  signAndSend.mockResolvedValue({ result: { isErr: () => false } });
+  signAndSend.mockResolvedValue({ result: { isErr: () => false }, sendTransactionResponse: { hash: TX_HASH } });
 });
 
 describe("CircleDashboard", () => {
@@ -95,6 +96,13 @@ describe("CircleDashboard", () => {
     expect(deposit).toHaveBeenCalledWith({ circle_id: 2n, member: B });
     expect(signAndSend).toHaveBeenCalledOnce();
     expect(refetch).toHaveBeenCalled();
+
+    const status = await screen.findByRole("status");
+    expect(status).toHaveTextContent("Deposit confirmed.");
+    expect(screen.getByRole("link", { name: "View transaction" })).toHaveAttribute(
+      "href",
+      `https://stellar.expert/explorer/testnet/tx/${TX_HASH}`
+    );
   });
 
   it("does not request a signature when the preflight check fails", async () => {
@@ -106,7 +114,7 @@ describe("CircleDashboard", () => {
 
     await user.click(screen.getByRole("button", { name: "Deposit contribution (1)" }));
 
-    expect(await screen.findByText("You've already deposited your contribution for this round.")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent("You've already deposited your contribution for this round.");
     expect(signAndSend).not.toHaveBeenCalled();
   });
 
