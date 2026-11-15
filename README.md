@@ -27,10 +27,12 @@ organizer or platform ever holds the group's money.
 
 ### Demo
 
-A full circle on the live app: three members join, deposit and receive payouts over three rounds.
-The run is automated with Playwright; each member connects through Stellar Wallets Kit's Freighter
-option, backed by a test implementation of the Freighter wallet protocol, and all 16 transactions
-are confirmed on testnet ([run details](docs/testnet/browser-e2e-run.md)).
+A full circle on the live app, seen from one member's screen: connect, create, join, deposit, a
+read-only payout check, and payouts over three rounds until the circle completes (93 s, captioned,
+waiting periods sped up). The run is automated with Playwright
+([`web/e2e/demo-video.spec.ts`](web/e2e/demo-video.spec.ts)); members connect through Stellar
+Wallets Kit's Freighter option, backed by a test implementation of the Freighter wallet protocol,
+and every transaction is confirmed on testnet.
 
 [![Demo video: three members completing a circle on the live app](docs/media/halka-demo-poster.jpg)](docs/media/halka-demo.mp4)
 

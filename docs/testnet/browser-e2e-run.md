@@ -10,9 +10,8 @@ wallet code path; keys stay in the test process. Every transaction is built by t
 its preflight, signed by that wallet and submitted to Stellar testnet. All 16 transactions
 succeeded.
 
-[![Demo video: the three members' browsers during the run](../media/halka-demo-poster.jpg)](../media/halka-demo.mp4)
-
-*[Watch the recording](../media/halka-demo.mp4) (66 s, 2× speed).*
+A captioned walkthrough of the same flow on the live app (circle 32) is in the
+[demo video](../media/halka-demo.mp4).
 
 - **Contract ID:** `CBOGI62MN5V3M7QSOKS7E6YWLLAO73LJIS3TMBMEFIADG2LDC37HUI5Q`
 - **Circle ID:** `30`
