@@ -99,9 +99,22 @@ contracts) lives in [`web/src/lib/config.ts`](web/src/lib/config.ts). See
 | Wallet-signed lifecycle on testnet | `npm run test:e2e` with three funded test accounts | [docs/testnet/browser-e2e-run.md](docs/testnet/browser-e2e-run.md) |
 | Contract regression on testnet | `npm run test:contract` | [docs/wallet-integration.md](docs/wallet-integration.md#testnet-regression-harness) |
 
-[CI](https://github.com/fivauygn/halka/actions) runs the contract tests and build, web lint, type
-checks, unit and component tests, the production build, and the read-only browser tests on every
-push. See [CONTRIBUTING.md](CONTRIBUTING.md) for running the wallet-signed suite.
+[CI](https://github.com/fivauygn/halka/actions/workflows/ci.yml) runs the contract tests and build,
+web lint, type checks, unit and component tests, the production build, and the read-only browser
+tests on every push. The [Testnet workflow](https://github.com/fivauygn/halka/actions/workflows/testnet.yml)
+runs the regression harness and the wallet-signed browser lifecycle weekly, with fresh
+Friendbot-funded accounts, so network upgrades that break the app are caught early. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for running these suites locally.
+
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| [Architecture](docs/architecture.md) | Data model, contract API, design decisions, known limitations |
+| [Wallet integration](docs/wallet-integration.md) | Wallet compatibility matrix, transaction preflight, error messages, security boundary, test suites |
+| [Acceptance report](docs/acceptance-report.md) | Per-wallet results for connection, signing, confirmation and state refresh |
+| [Manual testing guide](docs/manual-testing.md) | Checking Freighter, Albedo and Hana by hand |
+| [Testnet runs](docs/testnet/) | Transaction logs for every verification run |
 
 ## Testnet verification
 
@@ -132,7 +145,7 @@ request process.
 ## Roadmap
 
 - [x] Browser end-to-end test with wallet-signed testnet transactions
-- [ ] Manual testing with the Freighter, Albedo and Hana extensions ([guide](docs/manual-testing.md))
+- [ ] Manual acceptance with the Freighter, Albedo and Hana wallets ([report](docs/acceptance-report.md))
 - [ ] Fair payout order using verifiable randomness
 - [ ] Late-payment and default handling beyond timeout reclaim
 - [ ] Yield on idle pool balances

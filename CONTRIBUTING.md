@@ -46,7 +46,11 @@ export HALKA_E2E_MEMBER3_SECRET="$(stellar keys secret <alias-3>)"
 npm run test:e2e
 ```
 
-Never use keys that hold real funds, and never commit secret keys.
+Never use keys that hold real funds, and never commit secret keys. To create throwaway funded
+accounts, run `npx tsx scripts/fund-testnet-accounts.ts NAME…` (it prints the public keys), or use
+`stellar keys generate <alias> --network testnet --fund`. The
+[Testnet workflow](.github/workflows/testnet.yml) does the same in CI and can be started from the
+Actions tab.
 
 ## Pull requests
 
