@@ -32,16 +32,19 @@ signature, and that completed circles and closed invite links render correctly.
 
 Recorded with the real wallets, following the [manual testing guide](manual-testing.md).
 
-Manual run on the live app, 2026-11-15, circle 31.
+Manual run on the live app, 2026-11-15, with one circle whose three members each used a different
+wallet (circle 33). Hana created the circle; every member joined and deposited from its own wallet;
+Hana triggered the round 1 payout to the Albedo member. All 8 transactions succeeded on testnet.
 
 | Wallet | Connect | Account display | Signing | Confirmation | State refresh | Transactions | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Hana | Pass | Pass | Pass | Pass | Pass | [create_circle](https://stellar.expert/explorer/testnet/tx/4a014b28fed1b9b8f4f4e4fdbcbcffdd133f2b4af90f09077da1ff403166b6ca), [join_circle](https://stellar.expert/explorer/testnet/tx/81ef0623c135c312ee4fd206985be7237de44e441b9b06ccad032e489d77291e) | Hana must be on Testnet: on Mainnet it shows "Incorrect network" and disables Sign, because the app requests a Testnet signature. |
-| Albedo | Pass | Pass | Pending | Pending | Pending | | Connects after the fix in issue 1. With an account that is not a member, the app refuses to join and names the connected address. |
-| Freighter | Pending | Pending | Pending | Pending | Pending | | |
+| Freighter (shown as Varial) | Pass | Pass | Pass | Pass | Pass | [join](https://stellar.expert/explorer/testnet/tx/ecce0c5659c7320a0f03f348268237e10dc13bbe24193f2544dcc59a0c466444), [deposit](https://stellar.expert/explorer/testnet/tx/572c9d7d8bf841dfbd13ad62899c4302490f3be8aa38af8321b5d5f36ab08257) | |
+| Albedo | Pass | Pass | Pass | Pass | Pass | [join](https://stellar.expert/explorer/testnet/tx/36bfd165eeaa343d217f798dd061d896674dcb40b220a677b2c5941e52d3ffa7), [deposit](https://stellar.expert/explorer/testnet/tx/e3ba270808afa2507ef81baaf888f42482585937542a44f7ea3eee9b7f452d5e) | Connects after the fix in issue 1. Signs with the account selected in Albedo; with an account that is not a member, the app refuses to join and names the connected address. |
+| Hana | Pass | Pass | Pass | Pass | Pass | [create_circle](https://stellar.expert/explorer/testnet/tx/0800f052e1e466f02cce799a6184b7d0fc78e21b4e8d7263fca938feab6baef9), [join](https://stellar.expert/explorer/testnet/tx/d11a55659f5ceb0ea42730788be1af373fb5f81745e64699cf6a1221219c4ab6), [deposit](https://stellar.expert/explorer/testnet/tx/a0527a9b374f588ea7b440235db4086532404fa7c29102515ad89719f10f0e88), [payout](https://stellar.expert/explorer/testnet/tx/960be5596efbef8ab0583865440a9b42daf4c8b72a697e1da8e8f808524e2877) | Hana must be on Testnet: on Mainnet it shows "Incorrect network" and disables Sign, because the app requests a Testnet signature. An earlier run (circle 31) also created and joined a circle with Hana. |
 
-Record each result as **Pass**, **Fail** (with the message shown) or **Not available** (with the
-reason), and link the transaction on stellar.expert.
+Members of circle 33, in payout order: `GAGPTGD45TI5FZUVINBBFRVI57HTWWUEBWQEKTT5OEMIFJABTTBKPX5I`
+(Albedo), `GCTABTJ67VIFIRIICRZ3YJ3WLM46R5SVHTJOVLVCVR5HJJ3JU3N72WNY` (Freighter),
+`GAFXJXPAHCOI4OE6W5E6CNG757UOQNP6RPV3AMACD4BOAUOTBTQXBKI3` (Hana).
 
 ## Issues found during manual testing
 

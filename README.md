@@ -156,7 +156,7 @@ request process.
 ## Roadmap
 
 - [x] Browser end-to-end test with wallet-signed testnet transactions
-- [ ] Manual acceptance with the Freighter, Albedo and Hana wallets ([report](docs/acceptance-report.md))
+- [x] Manual acceptance with the Freighter, Albedo and Hana wallets ([report](docs/acceptance-report.md))
 - [ ] Fair payout order using verifiable randomness
 - [ ] Late-payment and default handling beyond timeout reclaim
 - [ ] Yield on idle pool balances
