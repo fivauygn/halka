@@ -52,6 +52,12 @@ describe("describeError", () => {
     );
   });
 
+  it("explains an account that is not funded on testnet", () => {
+    expect(describeError(new Error("Account not found: GAFXJXPAHCOI4OE6W5E6CNG757UOQNP6RPV3AMACD4BOAUOTBTQXBKI3"))).toBe(
+      "This account isn't funded on Stellar testnet yet. Fund it with Friendbot (friendbot.stellar.org) and try again."
+    );
+  });
+
   it("keeps the wrong-network message instead of reporting a connection error", () => {
     const message = "Your wallet is not on the Stellar Testnet. Switch networks in the wallet and reconnect.";
     expect(describeError(new Error(message))).toBe(message);

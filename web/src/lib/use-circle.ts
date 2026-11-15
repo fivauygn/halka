@@ -38,10 +38,14 @@ async function fetchCircle(circleId: bigint) {
   return { circle, members };
 }
 
+export const CIRCLE_REFRESH_INTERVAL_MS = 15_000;
+
 export function useCircle(circleId: bigint) {
   const { data, error, isLoading, mutate } = useSWR(
     ["circle", circleId.toString()],
-    () => fetchCircle(circleId)
+    () => fetchCircle(circleId),
+    // Members act from their own browsers, so refresh regularly to show their joins and deposits.
+    { refreshInterval: CIRCLE_REFRESH_INTERVAL_MS }
   );
 
   return {

@@ -50,6 +50,9 @@ export function describeError(err: unknown): string {
       : String(err);
   const lower = raw.toLowerCase();
 
+  if (lower.includes("account not found")) {
+    return "This account isn't funded on Stellar testnet yet. Fund it with Friendbot (friendbot.stellar.org) and try again.";
+  }
   if (lower.includes("user closed the modal")) {
     return "Wallet selection was cancelled.";
   }

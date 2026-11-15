@@ -2,6 +2,7 @@ import { Client, Errors, networks, rpc } from "@/lib/contracts/circle";
 import { RPC_URL } from "@/lib/config";
 import type { Circle } from "@/lib/contracts/circle";
 import { contractCallError, contractErrorMessage } from "@/lib/errors";
+import { withWalletTimeout } from "@/lib/wallet-timeout";
 
 /** Read-only client for simulated (non-signing) contract calls. */
 export function getReadOnlyClient() {
@@ -20,20 +21,24 @@ export function getWalletClient(address: string) {
     options?: { networkPassphrase?: string; address?: string }
   ) => {
     const { StellarWalletsKit } = await import("@creit.tech/stellar-wallets-kit/sdk");
-    return StellarWalletsKit.signTransaction(xdr, {
-      ...options,
-      address: options?.address ?? address,
-    });
+    return withWalletTimeout(
+      StellarWalletsKit.signTransaction(xdr, {
+        ...options,
+        address: options?.address ?? address,
+      })
+    );
   };
   const signAuthEntry = async (
     authEntry: string,
     options?: { networkPassphrase?: string; address?: string }
   ) => {
     const { StellarWalletsKit } = await import("@creit.tech/stellar-wallets-kit/sdk");
-    return StellarWalletsKit.signAuthEntry(authEntry, {
-      ...options,
-      address: options?.address ?? address,
-    });
+    return withWalletTimeout(
+      StellarWalletsKit.signAuthEntry(authEntry, {
+        ...options,
+        address: options?.address ?? address,
+      })
+    );
   };
 
   return new Client({
