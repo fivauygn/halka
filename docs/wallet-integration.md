@@ -25,10 +25,17 @@ Fallbacks shown to the user in every wallet:
 | User closes the wallet picker | Wallet selection was cancelled. |
 | User rejects the signature | The transaction was not approved in the wallet. |
 | No usable wallet | No compatible wallet was found. Install a supported wallet or select another option. |
+| Account not funded on testnet | This account isn't funded on Stellar testnet yet. Fund it with Friendbot (friendbot.stellar.org) and try again. |
+| Wallet does not answer within two minutes | The wallet did not respond. Open your wallet to approve or decline the request, then try again. |
 | RPC unreachable | Network error — could not reach the Stellar testnet. Please try again. |
 
 After a successful deposit, payout, reclaim or join, the dashboard confirms the action, links the
-transaction on stellar.expert and refreshes the circle state.
+transaction on stellar.expert and refreshes the circle state. The circle page also refreshes every
+15 seconds, so other members' joins and deposits appear without a reload.
+
+| Wallet picker | Wallet on the wrong network |
+| --- | --- |
+| ![Stellar Wallets Kit picker with Albedo, Varial (Freighter) and Hana Wallet](screenshots/05-wallet-picker.png) | ![The app refusing a Freighter wallet that is not on testnet](screenshots/07-wrong-network.png) |
 
 ## Security boundary
 
@@ -65,6 +72,8 @@ enforces every rule again on-chain.
 
 When a round is incomplete, the dashboard also offers a read-only **"Check why payout is
 unavailable"** action. It simulates `payout` and shows the result without requesting a signature.
+
+![Read-only payout check explaining that not all members have contributed](screenshots/06-payout-preflight.png)
 
 | Contract error | Message shown before signing |
 | --- | --- |

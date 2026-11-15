@@ -31,11 +31,23 @@ signature, and that completed circles and closed invite links render correctly.
 
 Recorded with the real wallets, following the [manual testing guide](manual-testing.md).
 
-| Wallet | Version | Connect | Account display | Signing | Confirmation | State refresh | Transaction | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Freighter | | Pending | Pending | Pending | Pending | Pending | | |
-| Albedo | | Pending | Pending | Pending | Pending | Pending | | |
-| Hana | | Pending | Pending | Pending | Pending | Pending | | |
+Manual run on the live app, 2026-11-15, circle 31.
+
+| Wallet | Connect | Account display | Signing | Confirmation | State refresh | Transactions | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Hana | Pass | Pass | Pass | Pass | Pass | [create_circle](https://stellar.expert/explorer/testnet/tx/4a014b28fed1b9b8f4f4e4fdbcbcffdd133f2b4af90f09077da1ff403166b6ca), [join_circle](https://stellar.expert/explorer/testnet/tx/81ef0623c135c312ee4fd206985be7237de44e441b9b06ccad032e489d77291e) | Hana must be on Testnet: on Mainnet it shows "Incorrect network" and disables Sign, because the app requests a Testnet signature. |
+| Albedo | Pass | Pass | Pending | Pending | Pending | | Connects after the fix in issue 1. With an account that is not a member, the app refuses to join and names the connected address. |
+| Freighter | Pending | Pending | Pending | Pending | Pending | | |
 
 Record each result as **Pass**, **Fail** (with the message shown) or **Not available** (with the
 reason), and link the transaction on stellar.expert.
+
+## Issues found during manual testing
+
+| # | Issue | Found with | Resolution |
+| --- | --- | --- | --- |
+| 1 | Albedo and Hana failed to connect: "does not support the getNetwork function". | Albedo, Hana | Fixed in [795b328](https://github.com/fivauygn/halka/commit/795b328): the network check is skipped only for wallets that cannot report their network; signing requests still carry the Testnet passphrase. |
+| 2 | An account not yet funded on testnet produced a raw "Account not found" error. | Hana | Fixed in [965118b](https://github.com/fivauygn/halka/commit/965118b): the app explains that the account needs testnet funds and points to Friendbot. |
+| 3 | When the wallet window was closed without approving or declining, the app stayed on "Creating…". | Hana | Fixed in [965118b](https://github.com/fivauygn/halka/commit/965118b): after two minutes without an answer the app stops waiting and explains what to do. Nothing is submitted without a signature. |
+| 4 | Joins and deposits by other members appeared only after a reload. | All | Fixed in [965118b](https://github.com/fivauygn/halka/commit/965118b): circle state refreshes every 15 seconds. |
+| 5 | Signing on the wrong network. | Hana | Working as intended: Hana refuses to sign a Testnet request while set to Mainnet. |
