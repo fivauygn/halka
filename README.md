@@ -25,6 +25,15 @@ organizer or platform ever holds the group's money.
 
 </details>
 
+### Demo
+
+A full circle on the live app: three members join, deposit and receive payouts over three rounds.
+The run is automated with Playwright; each member connects through Stellar Wallets Kit's Freighter
+option, backed by a test implementation of the Freighter wallet protocol, and all 16 transactions
+are confirmed on testnet ([run details](docs/testnet/browser-e2e-run.md)).
+
+[![Demo video: three members completing a circle on the live app](docs/media/halka-demo-poster.jpg)](docs/media/halka-demo.mp4)
+
 ## Features
 
 - **Non-custodial pool:** contributions are held by the contract and paid out only by its rules.
@@ -127,7 +136,7 @@ can be checked on stellar.expert.
 | [5 members, 5 rounds](docs/testnet/five-member-cycle-xlm.md) | XLM | 36 |
 | [3 members, 3 rounds](docs/testnet/three-member-cycle-usdc.md) | USDC | 16 |
 | [Regression run: 19 scenarios](docs/testnet/regression-run.jsonl) | XLM | 14 submitted, 5 expected rejections |
-| [Browser run: 3 members, 3 rounds, wallet-signed through the web app](docs/testnet/browser-e2e-run.md) | XLM | 16 |
+| [Browser run on the live app: 3 members, 3 rounds, wallet-signed](docs/testnet/browser-e2e-run.md) | XLM | 16 |
 
 Test accounts: [docs/testnet/accounts.md](docs/testnet/accounts.md).
 

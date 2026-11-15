@@ -19,11 +19,13 @@ Each wallet is checked for the same five steps:
 
 | Run | Wallet path | Connect | Account display | Signing | Confirmation | State refresh | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Browser lifecycle, local build | Freighter protocol (test implementation) | Pass | Pass | Pass, 16 transactions | Pass | Pass | [browser-e2e-run.md](testnet/browser-e2e-run.md) |
+| Browser lifecycle on production, 2026-11-15 (circle 30) | Freighter protocol (test implementation) | Pass | Pass | Pass, 16 transactions | Pass | Pass | [browser-e2e-run.md](testnet/browser-e2e-run.md), [video](media/halka-demo.mp4) |
+| Browser lifecycle on a local production build, 2026-11-14 (circle 25) | Freighter protocol (test implementation) | Pass | Pass | Pass, 16 transactions | Pass | Pass | Commit history of [browser-e2e-run.jsonl](testnet/browser-e2e-run.jsonl) |
+| [Testnet workflow](https://github.com/fivauygn/halka/actions/workflows/testnet.yml), weekly in CI | Freighter protocol (test implementation) | Pass | Pass | Pass | Pass | Pass | Transaction logs attached to each workflow run |
 
-The read-only browser suite additionally verifies, on every CI run, that a wallet on the wrong
-network is refused, that invalid circle parameters are rejected before any signature, and that
-completed circles and closed invite links render correctly.
+The read-only browser suite additionally verifies, on every CI run and against production, that a
+wallet on the wrong network is refused, that invalid circle parameters are rejected before any
+signature, and that completed circles and closed invite links render correctly.
 
 ## Manual results
 
