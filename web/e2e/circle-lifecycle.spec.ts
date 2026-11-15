@@ -30,8 +30,13 @@ interface Member {
 const records: { at: string; step: string; signer: string; txHash: string }[] = [];
 let currentStep = "";
 
-async function openAs(browser: Browser, keypair: Keypair): Promise<Member> {
-  const context = await browser.newContext();
+async function openAs(browser: Browser, keypair: Keypair, name: string): Promise<Member> {
+  const size = { width: 1280, height: 800 };
+  const context = await browser.newContext({
+    viewport: size,
+    // Each member's browser is recorded separately when E2E_VIDEO is set.
+    recordVideo: process.env.E2E_VIDEO ? { dir: test.info().outputPath(name), size } : undefined,
+  });
   const page = await context.newPage();
   await installFakeFreighter(page, keypair, {
     onSign: (tx) => records.push({ at: new Date().toISOString(), step: currentStep, signer: tx.signer, txHash: tx.hash }),
@@ -47,7 +52,7 @@ async function openCircle(member: Member, circleId: string) {
 
 test("runs a full 3-member, 3-round circle with wallet-signed testnet transactions", async ({ browser }) => {
   test.setTimeout(15 * 60_000);
-  const members = await Promise.all(secrets.map((s) => openAs(browser, Keypair.fromSecret(s!))));
+  const members = await Promise.all(secrets.map((s, i) => openAs(browser, Keypair.fromSecret(s!), `member${i + 1}`)));
   const addresses = members.map((m) => m.keypair.publicKey());
   const [creator] = members;
 
@@ -105,6 +110,9 @@ test("runs a full 3-member, 3-round circle with wallet-signed testnet transactio
   await openCircle(creator, circleId);
   await expect(creator.page.getByText("Completed", { exact: true })).toBeVisible();
   expect(records).toHaveLength(1 + 3 + 3 * 4);
+
+  // Closing the contexts finalizes any recorded videos.
+  await Promise.all(members.map((m) => m.page.context().close()));
 });
 
 test.afterAll(() => {
